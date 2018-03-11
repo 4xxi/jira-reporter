@@ -36,4 +36,12 @@ services:
         arguments: ['@logger']
         tags:
             - { name: monolog.logger, channel: api }
+    
+    App\Jira\Sync\Worklog:
+        arguments: ['@App\Jira\Client', '@App\Jira\Mapper\Worklog', '@doctrine.orm.entity_manager', '@logger']
+        tags:
+            - { name: monolog.logger, channel: api }
+
+    App\Jira\Mapper\Worklog:
+        arguments: ['@App\Repository\Jira\WorklogRepository']
         

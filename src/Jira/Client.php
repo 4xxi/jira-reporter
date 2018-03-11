@@ -2,6 +2,8 @@
 
 namespace App\Jira;
 
+use App\Entity\Jira\Instance;
+
 class Client 
 {
     
@@ -9,8 +11,14 @@ class Client
     private $baseUrl;
     private $client;
     
+    /**
+     * @var Psr\Log\LoggerInterface
+     */
     private $logger;
     
+    /**
+     * @param Psr\Log\LoggerInterface $logger
+     */
     public function __construct($logger)
     {
         $this->logger = $logger;
@@ -21,9 +29,13 @@ class Client
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($this->curl, CURLOPT_FAILONERROR, true);
+		curl_setopt($this->curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json;charset=UTF-8'));
     }
     
-    private function setInstance($instance)
+    /**
+     * @param Instance $instant
+     */
+    private function setInstance(Instance $instance)
     {
         $this->baseUrl = $instance->getBaseUrl();
         curl_setopt($this->curl, CURLOPT_USERPWD, $instance->getUsername().":".$instance->getToken());
@@ -35,18 +47,68 @@ class Client
         curl_setopt($this->curl, CURLOPT_URL, $this->baseUrl.$endpoint);
     }
     
-    public function checkConnection($instance)
+    /**
+     * @param Instance $instant
+     */
+    public function checkConnection(Instance $instance)
     {
         $this->setInstance($instance);
         $this->setEndpoint('/rest/api/2/project');
+
+        curl_setopt($this->curl, CURLOPT_POST, 0);        
+
         $res = (curl_exec($this->curl));
         
         if (curl_error($this->curl)) {
             $this->logger->error('Error in JIRA connection: '.curl_error($this->curl));
             return false;
-        } else {
-            return true;
         }
+
+        return true;
     }
     
+    /**
+     * @param Instance $instance
+     * @param string $endpoint - e.g. /rest/api/2/project. Starts with /
+     * @param array $options
+     */
+    public function request($instance, $endpoint, array $options)
+    {
+        $this->setInstance($instance);
+        $this->setEndpoint($endpoint.'?'.http_build_query($options));
+        
+        curl_setopt($this->curl, CURLOPT_POST, 0);        
+
+        $res = (curl_exec($this->curl));
+        
+        if (curl_error($this->curl)) {
+            $this->logger->error('Error in JIRA connection: '.curl_error($this->curl));
+            return null;
+        }
+        
+        return json_decode($res);
+    }
+
+    /**
+     * @param Instance $instance
+     * @param string $endpoint - e.g. /rest/api/2/project. Starts with /
+     * @param array $options
+     */
+    public function post($instance, $endpoint, array $options)
+    {
+        $this->setInstance($instance);
+        $this->setEndpoint($endpoint);
+
+        curl_setopt($this->curl, CURLOPT_POST, 1);        
+        curl_setopt($this->curl, CURLOPT_POSTFIELDS, json_encode($options));
+        
+        $res = (curl_exec($this->curl));
+        
+        if (curl_error($this->curl)) {
+            $this->logger->error('Error in JIRA connection: '.curl_error($this->curl));
+            return null;
+        }
+        
+        return json_decode($res);
+    }
 }
