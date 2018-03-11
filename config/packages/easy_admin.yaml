@@ -1,0 +1,11 @@
+easy_admin:
+    entities:
+       - App\Entity\Config
+       - App\Entity\Jira\Instance
+    site_name: 'JIRA report admin panel'
+    design:
+        brand_color: 'rgb(174, 43, 43)'
+        menu:
+            - Config
+            - Instance
+            - { label: 'Public Homepage', route: 'homepage' }
