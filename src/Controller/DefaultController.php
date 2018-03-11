@@ -8,6 +8,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
 class DefaultController extends Controller
 {
+    
     /**
      * @Route("/", name="homepage")
      * @Route("/{period}", name="time_report", defaults={"period"="month"}, requirements={
@@ -108,7 +109,7 @@ class DefaultController extends Controller
     
     private function numberOfWorkingDays(\DateTime $from, \DateTime $to) {
         $workingDays = [1, 2, 3, 4, 5]; # date format = N (1 = Monday, ...)
-        $holidayDays = ['*-01-01', '*-01-02', '2018-03-08', '2018-03-09']; # variable and fixed holidays
+        $holidayDays = $this->getDoctrine()->getRepository('App:Config')->getValueAsArray('holidays');
 
         $to->modify('+1 day');
         $interval = new \DateInterval('P1D');

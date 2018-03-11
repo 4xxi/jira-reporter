@@ -16,7 +16,7 @@ class InstanceBuilder
      */
     private $client;
     /**
-     * @var Psr\Log\LoggerInterface
+     * @var \Psr\Log\LoggerInterface
      */
     private $logger;
     
@@ -25,7 +25,7 @@ class InstanceBuilder
      * @param \App\Jira\Client $client
      * @param \Psr\Log\LoggerInterface $logger
      */
-    public function __construct(\Doctrine\ORM\EntityManager $em, \App\Jira\Client $client, Psr\Log\LoggerInterface $logger)
+    public function __construct(\Doctrine\ORM\EntityManager $em, \App\Jira\Client $client, \Psr\Log\LoggerInterface $logger)
     {
         $this->em     = $em;
         $this->client = $client;

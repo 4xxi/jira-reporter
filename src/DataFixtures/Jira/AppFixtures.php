@@ -12,8 +12,9 @@ class AppFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         $instance = new Instance();
-        $instance->setName('4xxi');
-        $instance->setBaseUrl('https://fourxxi.atlassian.net');
+        $instance->setName('name');
+        $instance->setUsername('username');
+        $instance->setBaseUrl('https://example.atlassian.net');
         $instance->setToken('token');
         
         $manager->persist($instance);
