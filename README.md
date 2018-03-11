@@ -78,6 +78,15 @@ docker-compose exec php bin/phpunit
 
 ## Using app
 
+### Add JIRA instance
+
+```bash
+php bin/console app:jira:instance:add
+```
+
+* When you add JIRA URL don't forget to use https, not http: `https://yourcompany.atlassian.net`.
+* @TODO: add instructions how to get token.
+
 ### Sync worklogs for specific instance
 
 ```bash
@@ -85,3 +94,19 @@ php bin/console app:jira:worklog:sync --instance=28 --startDate='2018-02-01'
 ```
 
 * You can also specify endDate but due to JIRA REST API it might take more data
+* Note that there are a lot of logs added during the execution. Use `tail -F` to monitor any issues:
+
+```bash
+tail -F var/logs/api\_env\_YYYY-mm-dd.log
+```
+
+## Sync users
+
+```bash
+php bin/console app:jira:user:sync --instance=28
+```
+
+
+### Offdays
+
+* Offdays include `startDate` and **does not** include `endDate`.

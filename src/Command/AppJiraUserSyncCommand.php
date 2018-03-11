@@ -37,6 +37,7 @@ class AppJiraUserSyncCommand extends Command
         $this
             ->setDescription('Sync worklogs with JIRA Instance')
             ->addOption('instance', false, InputOption::VALUE_OPTIONAL, 'ID of JIRA instance')
+            ->addOption('group', false, InputOption::VALUE_OPTIONAL, 'User Group to sync data')
             ->addOption('dry-run', false, InputOption::VALUE_NONE, 'Only show')
         ;
     }
@@ -46,6 +47,7 @@ class AppJiraUserSyncCommand extends Command
         $io = new SymfonyStyle($input, $output);
         
         $instance_id = (int)$input->getOption('instance');
+        $group       = $input->getOption('group');
         $dryRun      = $input->getOption('dry-run');
         
         if (!$instance_id) {
@@ -60,7 +62,7 @@ class AppJiraUserSyncCommand extends Command
             return null;
         }
 
-        $users = $this->userSync->sync($instance);
+        $users = $this->userSync->sync($instance, $group);
         $io->success(sprintf('Sync has been successfully completed! %d users have been updated!', count($users)));
     }
 }

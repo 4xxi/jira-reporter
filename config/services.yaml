@@ -53,5 +53,7 @@ services:
             - { name: monolog.logger, channel: api }
 
     App\Jira\Mapper\User:
-        arguments: ['@App\Repository\Jira\UserRepository']
+        arguments: ['@App\Repository\Jira\UserRepository', '@logger']
+        tags:
+            - { name: monolog.logger, channel: api }
     

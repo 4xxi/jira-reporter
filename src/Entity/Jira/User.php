@@ -5,6 +5,8 @@ namespace App\Entity\Jira;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
+use App\Model\TimeTable;
+
 /**
  * @ORM\Entity(repositoryClass="App\Repository\Jira\UserRepository")
  * @ORM\Table(name="jira_user")
@@ -21,7 +23,7 @@ class User
     private $id;
     
     /**
-     * @ORM\OneToMany(targetEntity="\App\Entity\Offday", mappedBy="jira_user")
+     * @ORM\OneToMany(targetEntity="\App\Entity\Offday", mappedBy="user", cascade={"persist", "remove"}, orphanRemoval=true)
      */
     private $offdays;
 
@@ -66,6 +68,29 @@ class User
      */
     private $active;
 
+    private $timeTable;
+    
+    public function setTimeTable($startDate, $endDate, $holidayDays)
+    {
+        $this->timeTable = new TimeTable();
+        $this->timeTable->setInterval($startDate, $endDate);
+        $this->timeTable->setOffDays($this->offdays);
+        $this->timeTable->setHolidays($holidayDays);
+    }
+    
+    public function addToTimeTable($date, $value)
+    {
+        if (!$this->timeTable) {
+            throw new \Exception('TimeTable does not exist. It cannot be');
+        }
+        return $this->timeTable->add($date, $value);
+    }
+    
+    public function getTimeTable()
+    {
+        return $this->timeTable;
+    }
+    
     public function __construct()
     {
         $this->offdays = new ArrayCollection();
@@ -232,9 +257,11 @@ class User
      */
     public function addOffday(\App\Entity\Offday $offday)
     {
+        if ($this->offdays->contains($offday)) {
+            return;
+        }
         $this->offdays[] = $offday;
-
-        return $this;
+        $offday->setUser($this);
     }
 
     /**
@@ -245,6 +272,7 @@ class User
     public function removeOffday(\App\Entity\Offday $offday)
     {
         $this->offdays->removeElement($offday);
+        $offday->setUser(null);
     }
 
     /**

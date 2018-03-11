@@ -11,13 +11,18 @@ class User {
      * @var WorklogRepository
      */
     private $userRepository;
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    private $logger;
     
     /**
      * @param UserRepository $userRepository
      */
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserRepository $userRepository, \Psr\Log\LoggerInterface $logger)
     {
         $this->userRepository = $userRepository;
+        $this->logger = $logger;
     }
     
     /**
@@ -33,12 +38,17 @@ class User {
         }
         
         $av = '48x48';
-        
-        $user->setJiraId($jiraUser->accountId);
-        $user->setUsername($jiraUser->name);
-        $user->setName($jiraUser->displayName);
-        $user->setEmail($jiraUser->emailAddress);
-        $user->setAvatarUrl($jiraUser->avatarUrls->$av);
+        try {
+            $user->setJiraId($jiraUser->key);
+            $user->setUsername($jiraUser->name);
+            $user->setName($jiraUser->displayName);
+            $user->setEmail($jiraUser->emailAddress);
+            $user->setAvatarUrl($jiraUser->avatarUrls->$av);
+        } catch (\Exception $e) {
+            $this->logger->critical($e->getMessage());
+            $this->logger->info(serialize($jiraUser));
+            return null;
+        }
         
         return $user;
     }

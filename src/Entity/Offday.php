@@ -21,7 +21,7 @@ class Offday
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="App\Entity\Jira\User", inversedBy="jira_user", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity="\App\Entity\Jira\User", inversedBy="offdays", cascade={"persist"})
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id", nullable=true)
      */
     private $user;

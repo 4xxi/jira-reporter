@@ -31,58 +31,7 @@ class JiraTimeFormatExtension extends \Twig_Extension
         return array(
             new \Twig_SimpleFilter('jiraFullTime', array($this, 'jiraFullFormatFilter')),
             new \Twig_SimpleFilter('jiraHours', array($this, 'jiraHoursFilter'), array('is_safe' => array('html'))),
-            new \Twig_SimpleFilter('jiraStatus', array($this, 'jiraStatusFilter')),
-            new \Twig_SimpleFilter('priority', array($this, 'priority')),
         );
-    }
-
-    /**
-     * @param $status
-     * @param bool $reverse
-     * @param array $delimiters
-     * @return string
-     */
-    public function priority($status, $reverse = false, $delimiters = [20, 40, 60])
-    {
-        if ($status > 100) {
-            $status = 100;
-        }
-        if ($reverse) {
-            $status = 100-$status;
-        }
-        if ($status <= $delimiters[0]) {
-            $class = 'bg-success';
-        } elseif ($status < $delimiters[1]) {
-            $class = 'bg-info';
-        } elseif ($status < $delimiters[2]) {
-            $class = 'bg-warning';
-        } else {
-            $class = 'bg-danger';
-        }
-        return $class;
-    }
-    
-    /**
-     * @param string $status
-     *
-     * @return string
-     */
-    public function jiraStatusFilter($status)
-    {
-        switch ($status) {
-            case 'In Progress':
-                return '<span class="label label-warning">'.$status.'</span>';
-                break;
-            case 'Resolved':
-            case 'Closed':
-                return '<span class="label label-success">'.$status.'</span>';
-                break;
-            default:
-                return '<span class="label label-primary">'.$status.'</span>';
-                break;
-
-        }
-        return '<span class="label label-Primary">'.$status.'</span>';
     }
 
     /**
@@ -154,11 +103,11 @@ class JiraTimeFormatExtension extends \Twig_Extension
 
         $result = [];
 
-        if ($hours > 0) {
+        if ($hours != 0) {
             $result[] = $hours.'h';
         }
 
-        if ($minutes > 0) {
+        if ($minutes != 0) {
             $result[] = $minutes.'m';
         }
 

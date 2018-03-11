@@ -19,6 +19,24 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
+    public function findByUsernameWithOffDays($username)
+    {
+        $result = $this->createQueryBuilder('u')
+            ->leftJoin('u.offdays', 'o')
+            ->addSelect('o')
+            ->where('u.username = :username')
+            ->setParameter('username', $username)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+        
+        if ($result) {
+            return $result;
+        }
+        
+        return null;
+    }
+
     /*
     public function findBySomething($value)
     {

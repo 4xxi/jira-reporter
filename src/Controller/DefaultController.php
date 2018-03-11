@@ -6,6 +6,9 @@ use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 
+/**
+ * @todo This controller has a lot of magic, so refactoring is required.
+ */
 class DefaultController extends Controller
 {
     
@@ -67,30 +70,37 @@ class DefaultController extends Controller
         
         $timeTable = $this->getDoctrine()->getRepository('App:Jira\Worklog')->getTimeTable($startDate, $endDate);
         
-        $persons = $this->process($timeTable);
+        $persons = $this->process($timeTable, $startDate, $endDate);
         $totals  = $this->findTotal($persons);
         
         return [
             'period'    => $period,
             'persons'   => $persons,
             'totals'    => $totals,
-            'workingTime'  => $numberOfWorkingDays,
-            'workingTimeinMs'  => $numberOfWorkingDays*8*60*60,
             'startDate' => $startDate,
             'endDate'   => $endDate,
         ];
     }
     
-    private function process($timeTable)
+    private function process($timeTable, $startDate, $endDate)
     {
+        $holidayDays = $this->getDoctrine()->getRepository('App:Config')->getValueAsArray('holidays');
+        
         $persons = [];
         foreach ($timeTable as $obj) {
             $username = $obj['username'];
             if (!isset($persons[$username])) {
-                $persons[$username] = [];
+                $user = $this->getDoctrine()->getRepository('App:Jira\User')->findByUsernameWithOffDays($username);
+                if ($user) {
+                    $user->setTimeTable($startDate, $endDate, $holidayDays);
+                    $persons[$username] = $user;
+                }
             }
-            $persons[$username][$obj['created']] = $obj['timeSpent'];
+            if (isset($persons[$username])) {
+                $persons[$username]->addToTimeTable($obj['created'], $obj['timeSpent']);
+            }
         }
+        
         return $persons;
     }
     

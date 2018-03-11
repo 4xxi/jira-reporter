@@ -54,16 +54,20 @@ class User
 
     /**
      * @param App\Entity\Jira\Instance $instance
-     * @param \DateTime or null $startDate
-     * @param \DateTime or null $endDate
+     * @param string|null $group
      */
-    public function sync(Instance $instance)
+    public function sync(Instance $instance, $group)
     {
         $this->instance = $instance;
 
         $this->logger->info('Connecting to JIRA to get worklogs');
         
-        $users = $this->getUsers();
+        if ($group) {
+            $users = $this->getUsersByGroup($group);
+        } else {
+            $users = $this->getUsers();
+        }
+
         foreach ($users as $user) {
             $this->em->persist($user);
         }
@@ -74,8 +78,25 @@ class User
     }
     
     /**
-     * @param \DateTime or null $startDate
-     * @param \DateTime or null $endDate
+     * @param string $group
+     * @return array
+     */
+    private function getUsersByGroup($group)
+    {
+        $this->logger->info(sprintf('Getting users from group %s from JIRA', $group));
+        $response = $this->client->request($this->instance, '/rest/api/2/group/member', ['groupname' => $group, 'maxResults' => 1000]);
+
+        if (isset($response->values)) {
+            $this->logger->info(sprintf('Processing response. %d users found', count($response->values)));
+            foreach ($response->values as $jiraUser) {
+                $this->users[] = $this->userMapper->map($jiraUser);
+            }
+        }
+        return $this->users;
+    }
+    
+    /**
+     * @return array
      */
     private function getUsers()
     {
