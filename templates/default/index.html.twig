@@ -12,6 +12,7 @@
             <div class="panel-body">
                 Start Date: {{ startDate|date('Y-m-d')}}<br>
                 End Date: {{ endDate|date('Y-m-d')}}<br>
+                Working days: {{ workingTime }}<br>
             </div>
         </div>
         
@@ -30,7 +31,7 @@
             
             {% for key, person in persons %}
                 <tr>
-                    <td>{{ key }}</td>
+                    <td class="{% if totals[key]<=(workingTimeinMs*0.9) %}danger{% endif %}">{{ key }}</td>
                     {% for day in period %}
                         {% set tmp = day|date('Y-m-d') %}
                             {% if person[tmp] is defined %}
@@ -44,6 +45,7 @@
                         </td>
                     {% endfor %}
                     <td>{{ totals[key]|jiraHours }}</td>
+                    <td>{{ (workingTimeinMs)|jiraHours }} </td>
                 </tr>
             {% endfor %}
         </table>

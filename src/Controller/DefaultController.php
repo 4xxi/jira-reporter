@@ -35,22 +35,22 @@ class DefaultController extends Controller
 
             case 'last_week':
                 $startDate = new \DateTime('last week monday');
-                $endDate   = new \DateTime('+1 day last week sunday');
+                $endDate   = new \DateTime('last week sunday');
                 break;
 
             case 'current_week':
                 $startDate = new \DateTime('monday this week');
-                $endDate   = new \DateTime('+1 day sunday this week');
+                $endDate   = new \DateTime('sunday this week');
                 break;
 
             case 'last_month':
                 $startDate = new \DateTime('first day of last month');
-                $endDate   = new \DateTime('first day of this month');
+                $endDate   = new \DateTime('last day of last month');
                 break;
 
             case 'current_month':
                 $startDate = new \DateTime('first day of this month');
-                $endDate   = new \DateTime('first day of next month');
+                $endDate   = new \DateTime('last day of this month');
                 break;
             
             default:
@@ -58,6 +58,8 @@ class DefaultController extends Controller
                 $endDate   = new \DateTime();
                 break;
         }
+        
+        $numberOfWorkingDays = $this->numberOfWorkingDays($startDate, $endDate);
         
         $interval = \DateInterval::createFromDateString('1 day');
         $period = new \DatePeriod($startDate, $interval, $endDate);
@@ -71,6 +73,8 @@ class DefaultController extends Controller
             'period'    => $period,
             'persons'   => $persons,
             'totals'    => $totals,
+            'workingTime'  => $numberOfWorkingDays,
+            'workingTimeinMs'  => $numberOfWorkingDays*8*60*60,
             'startDate' => $startDate,
             'endDate'   => $endDate,
         ];
@@ -100,6 +104,25 @@ class DefaultController extends Controller
             $totals[$key] = $sum;
         }
         return $totals;
+    }
+    
+    private function numberOfWorkingDays(\DateTime $from, \DateTime $to) {
+        $workingDays = [1, 2, 3, 4, 5]; # date format = N (1 = Monday, ...)
+        $holidayDays = ['*-01-01', '*-01-02', '2018-03-08', '2018-03-09']; # variable and fixed holidays
+
+        $to->modify('+1 day');
+        $interval = new \DateInterval('P1D');
+        $periods = new \DatePeriod($from, $interval, $to);
+
+        $days = 0;
+        foreach ($periods as $period) {
+            if (!in_array($period->format('N'), $workingDays)) continue;
+            if (in_array($period->format('Y-m-d'), $holidayDays)) continue;
+            if (in_array($period->format('*-m-d'), $holidayDays)) continue;
+            $days++;
+        }
+        
+        return $days;
     }
     
 }
