@@ -18,7 +18,7 @@ Encore
     .autoProvidejQuery()
     .enableSourceMaps(!Encore.isProduction())
     // uncomment to create hashed filenames (e.g. app.abc123.css)
-    .enableVersioning(Encore.isProduction())
+    // .enableVersioning(Encore.isProduction())
 
 ;
 

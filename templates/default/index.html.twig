@@ -16,7 +16,7 @@
         </div>
         
         
-        <table class="table table-responsive table-condensed">
+        <table class="table table-responsive table-condensed table-bordered">
             <thead>
                 <tr>
                     <th>#</th>
@@ -43,6 +43,7 @@
                             {% endif %}
                         </td>
                     {% endfor %}
+                    <td>{{ totals[key]|jiraHours }}</td>
                 </tr>
             {% endfor %}
         </table>
