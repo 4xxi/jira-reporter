@@ -72,10 +72,14 @@ class Client
      * @param string $endpoint - e.g. /rest/api/2/project. Starts with /
      * @param array $options
      */
-    public function request($instance, $endpoint, array $options)
+    public function request($instance, $endpoint, array $options = [])
     {
         $this->setInstance($instance);
-        $this->setEndpoint($endpoint.'?'.http_build_query($options));
+        if (is_array($options) && count($options) > 0) {
+            $this->setEndpoint($endpoint.'?'.http_build_query($options));
+        } else {
+            $this->setEndpoint($endpoint);
+        }
         
         curl_setopt($this->curl, CURLOPT_POST, 0);        
 

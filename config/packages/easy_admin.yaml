@@ -1,11 +1,46 @@
 easy_admin:
+    show:
+        max_results: 100
     entities:
-       - App\Entity\Config
-       - App\Entity\Jira\Instance
+        Config:
+            class: App\Entity\Config
+        Instance:
+            class: App\Entity\Jira\Instance
+        User:
+            class: App\Entity\Jira\User
+            list:
+                fields: 
+                    - { property: 'avatarUrl', type: 'image' }
+                    - 'Name'
+                    - 'Username'
+                    - { property: 'Email', type: 'email' }
+                    - { property: 'Active', type: 'toggle' }
+        Offday:
+            class: App\Entity\Offday
+            list:
+                fields:
+                    - 'User'
+                    - { property: 'StartDate', type: 'datetime', format: 'Y-m-d' }
+                    - { property: 'EndDate', type: 'datetime', format: 'Y-m-d' }
+                    - { property: 'Off', type: 'toggle' }
+                    - 'Reason'
+                    - 'Created'
+            form:
+                fields:
+
+                    - { property: 'User', type: 'easyadmin_autocomplete', type_options: { class: 'App\Entity\Jira\User' }}
+                    - { property: 'StartDate', type: 'date', format: 'Y-m-d' }
+                    - { property: 'EndDate', type: 'date', format: 'Y-m-d' }
+                    # - { property: 'StartDate', type: 'date',  type_options: { widget: 'single_text' }, format: 'Y-m-d' }
+                    - { property: 'Off', type: 'checkbox' }
+                    - { property: 'Reason', type: 'text' }
+                
     site_name: 'JIRA report admin panel'
     design:
         brand_color: 'rgb(174, 43, 43)'
         menu:
             - Config
+            - User
+            - Offday
             - Instance
             - { label: 'Public Homepage', route: 'homepage' }

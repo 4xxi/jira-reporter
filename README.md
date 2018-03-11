@@ -75,3 +75,13 @@ Run PHP Unit Tests:
 ```bash
 docker-compose exec php bin/phpunit
 ```
+
+## Using app
+
+### Sync worklogs for specific instance
+
+```bash
+php bin/console app:jira:worklog:sync --instance=28 --startDate='2018-02-01'
+```
+
+* You can also specify endDate but due to JIRA REST API it might take more data

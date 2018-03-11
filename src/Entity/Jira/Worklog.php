@@ -99,7 +99,7 @@ class Worklog
      *
      * @param integer $issueId
      *
-     * @return JiraWorklog
+     * @return Worklog
      */
     public function setIssueId($issueId)
     {
@@ -123,7 +123,7 @@ class Worklog
      *
      * @param string $issueName
      *
-     * @return JiraWorklog
+     * @return Worklog
      */
     public function setIssueName($issueName)
     {
@@ -147,7 +147,7 @@ class Worklog
      *
      * @param string $username
      *
-     * @return JiraWorklog
+     * @return Worklog
      */
     public function setUsername($username)
     {
@@ -171,7 +171,7 @@ class Worklog
      *
      * @param integer $timeSpent
      *
-     * @return JiraWorklog
+     * @return Worklog
      */
     public function setTimeSpent($timeSpent)
     {
@@ -195,7 +195,7 @@ class Worklog
      *
      * @param \DateTime $created
      *
-     * @return JiraWorklog
+     * @return Worklog
      */
     public function setCreated($created)
     {
@@ -219,7 +219,7 @@ class Worklog
      *
      * @param \DateTime $updated
      *
-     * @return JiraWorklog
+     * @return Worklog
      */
     public function setUpdated($updated)
     {
