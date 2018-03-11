@@ -14,21 +14,39 @@ use Symfony\Bridge\Doctrine\RegistryInterface;
  */
 class WorklogRepository extends ServiceEntityRepository
 {
+    
     public function __construct(RegistryInterface $registry)
     {
         parent::__construct($registry, Worklog::class);
     }
-
-    /*
-    public function findBySomething($value)
+    
+    /**
+     * @param \DateTime|bool $startDate
+     * @param \DateTime|bool $endDate
+     * @return array
+     */
+    public function getTimeTable($startDate = false, $endDate = false)
     {
-        return $this->createQueryBuilder('w')
-            ->where('w.something = :value')->setParameter('value', $value)
-            ->orderBy('w.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
+        if (!$startDate) {
+            $startDate = new \DateTime('-7 days');
+        }
+        if (!$endDate) {
+            $endDate = new \DateTime();
+        }
+
+        $query = $this->getEntityManager()->createQuery(
+            'SELECT w.username, SUM(w.timeSpent) as timeSpent, date_format(w.created, \'YYYY-MM-DD\') as created 
+                FROM App:Jira\Worklog w
+                WHERE w.created >= :startDate AND w.created <= :endDate
+                GROUP BY w.username, created
+                ORDER BY w.username, created
+            '
+        )->setParameter('startDate', $startDate->format('Y-m-d'))
+            ->setParameter('endDate', $endDate->format('Y-m-d'))
         ;
+        
+        $query = $query->getResult();
+        return $query;
     }
-    */
+
 }

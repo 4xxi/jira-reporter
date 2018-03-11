@@ -44,4 +44,4 @@ services:
 
     App\Jira\Mapper\Worklog:
         arguments: ['@App\Repository\Jira\WorklogRepository']
-        
+    

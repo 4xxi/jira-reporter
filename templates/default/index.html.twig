@@ -4,18 +4,49 @@
 
 {% block content %}
 
-<div class="container">
+<div class="container-fluid" style="padding-left: 50px; padding-right: 50px;">
     <div class="row">
-        Cool<br>
-        Cool<br>
-        Cool<br>
-        Cool<br>
-        Cool<br>
-        Cool<br>
-        Cool<br>
+        
+        <div class="panel panel-default">
+            <div class="panel-heading">Dates</div>
+            <div class="panel-body">
+                Start Date: {{ startDate|date('Y-m-d')}}<br>
+                End Date: {{ endDate|date('Y-m-d')}}<br>
+            </div>
+        </div>
+        
+        
+        <table class="table table-responsive table-condensed">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    {% for day in period %}
+                        <th>{{  day|date('D') }}<br>{{  day|date('m/d') }}</th>
+                    {% endfor %}
+                    <th>Total</th>
+                    <th>Elapsed</th>
+                </tr>
+            </thead>
+            
+            {% for key, person in persons %}
+                <tr>
+                    <td>{{ key }}</td>
+                    {% for day in period %}
+                        {% set tmp = day|date('Y-m-d') %}
+                            {% if person[tmp] is defined %}
+                                {% set hours = person[tmp]/3600 %}
+                                <td class="{% if day|date('N')>5 %}warning{% elseif hours > 10 %}warning{% elseif hours >=7 %}success{% elseif hours >= 6 %}warning{% else %}danger{% endif %}">
+                                    {{ person[tmp]|jiraHours }}
+                                </td>
+                            {% else %}
+                                <td {% if day|date('N')>5 %}style="background-color: lightgray;"{% endif %}>-</td>
+                            {% endif %}
+                        </td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
     </div>
  </div>
-
-
    
 {% endblock %}
