@@ -67,7 +67,6 @@ class DefaultController extends Controller
         }
         
         $form = $this->createForm(TimeTableIntervalType::class);
-        
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

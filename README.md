@@ -85,7 +85,7 @@ php bin/console app:jira:instance:add
 ```
 
 * When you add JIRA URL don't forget to use https, not http: `https://yourcompany.atlassian.net`.
-* @TODO: add instructions how to get token.
+* You can use login & password to get access. However, the recommended way is to use one-time tokens. You can create them here: https://id.atlassian.com/manage/api-tokens.
 
 ### Sync worklogs for specific instance
 
