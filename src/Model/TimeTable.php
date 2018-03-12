@@ -40,7 +40,11 @@ class TimeTable implements \IteratorAggregate
     
     public function getWorkingInMs()
     {
-        return $this->numberOfWorkingDays()*8*60*60;
+        $now = new \DateTime();
+        if ($this->endDate > $now) {
+            return $this->calcNumberOfWorkingDays($this->startDate, $now)*8*60*60;
+        }
+        return $this->getNumberOfWorkingDays()*8*60*60;
     }
     
     public function total()
@@ -95,11 +99,13 @@ class TimeTable implements \IteratorAggregate
         return false;
     }
     
-    public function numberOfWorkingDays() {
+    public function getNumberOfWorkingDays()
+    {
+        return $this->calcNumberOfWorkingDays($this->startDate, $this->endDate);
+    }
+    
+    public function calcNumberOfWorkingDays($from, $to) {
         $days = 0;
-        
-        $from = clone($this->startDate);
-        $to   = clone($this->endDate);
         
         $workingDays = [1, 2, 3, 4, 5]; # date format = N (1 = Monday, ...)
 

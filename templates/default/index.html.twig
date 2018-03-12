@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% form_theme form 'bootstrap_3_layout.html.twig' %}
+
 {% block title %}List of worklogs!{% endblock %}
 
 {% block content %}
@@ -10,10 +12,24 @@
         <div class="panel panel-default">
             <div class="panel-heading">Dates</div>
             <div class="panel-body">
-                Start Date: {{ startDate|date('Y-m-d')}}<br>
-                End Date: {{ endDate|date('Y-m-d')}}<br>
+                {{ form_errors(form) }}
+                {{ form_start(form, { 'attr': {'class': 'form-inline'} }) }}
+                <div class="form-group">
+                    <label for="time_table_interval_startDate">StartDate</label>
+                    {{ form_errors(form.startDate) }}
+                    {{ form_widget(form.startDate) }}
+                </div>
+                <div class="form-group">
+                    <label for="time_table_interval_endDate">EndDate</label>
+                    {{ form_errors(form.endDate) }}
+                    {{ form_widget(form.endDate) }}
+                </div>
+                {{ form_end(form) }}
             </div>
         </div>
+        
+        <form class="form-inline">
+        </form>
         
         
         <table class="table table-responsive table-condensed table-bordered">

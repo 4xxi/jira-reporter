@@ -45,18 +45,12 @@ class JiraTimeFormatExtension extends \Twig_Extension
             return 0;
         }
 
-        $secondsInWeek = 60 * 60 * $this->hoursInDay * $this->daysInWeek;
-
-        $weeks = floor($number / $secondsInWeek);
-
-        $secondsInDay = 60 * 60 * $this->hoursInDay;
-
-        $days = floor(($number - $weeks * $secondsInWeek) / $secondsInDay);
-
-        $secondsInHour = 60 * 60;
-
-        $hours = floor(($number - $weeks * $secondsInWeek - $days * $secondsInDay) / $secondsInHour);
-
+        $secondsInWeek   = 60 * 60 * $this->hoursInDay * $this->daysInWeek;
+        $weeks           = floor($number / $secondsInWeek);
+        $secondsInDay    = 60 * 60 * $this->hoursInDay;
+        $days            = floor(($number - $weeks * $secondsInWeek) / $secondsInDay);
+        $secondsInHour   = 60 * 60;
+        $hours           = floor(($number - $weeks * $secondsInWeek - $days * $secondsInDay) / $secondsInHour);
         $secondsInMinute = 60;
 
         $minutes = floor(($number - $weeks * $secondsInWeek - $days * $secondsInDay - $hours * $secondsInHour) / $secondsInMinute);
@@ -93,15 +87,11 @@ class JiraTimeFormatExtension extends \Twig_Extension
             return 0;
         }
 
-        $secondsInHour = 60 * 60;
-
-        $hours = floor($number / $secondsInHour);
-
+        $secondsInHour   = 60 * 60;
+        $hours           = floor($number / $secondsInHour);
         $secondsInMinute = 60;
-
-        $minutes = floor(($number - $hours * $secondsInHour) / $secondsInMinute);
-
-        $result = [];
+        $minutes         = floor(($number - $hours * $secondsInHour) / $secondsInMinute);
+        $result          = [];
 
         if ($hours != 0) {
             $result[] = $hours.'h';
